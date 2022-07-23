@@ -3,6 +3,7 @@ package br.com.rd.ProjetoIntegrador.model.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Entity
@@ -19,6 +20,9 @@ public class Pedido {
     private Date dataDeCriacao;
     @Column(nullable = false)
     private Double frete;
+    @Column(nullable = false)
+    private Boolean finalizado;
+
 
 
 
@@ -32,10 +36,13 @@ public class Pedido {
     private Parcelamento parcelamento;
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "id_status_pedido")
-    private StatusPedido statusPedido;
+    private StatusPedido statusEntrega;
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "id_endereco")
     private Endereco endereco;
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_metodoPag")
+    private MetodoPag metodoPag;
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "id_cartao")
     private Cartao cartao;

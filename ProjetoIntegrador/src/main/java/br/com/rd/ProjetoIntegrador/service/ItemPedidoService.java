@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class Item_pedidoService {
+public class ItemPedidoService {
     @Autowired
     Item_pedidoRepository item_pedidoRepository;
     @Autowired
@@ -23,6 +23,8 @@ public class Item_pedidoService {
     PedidoRepository pedidoRepository;
     @Autowired
     EstoqueService estoqueService;
+    @Autowired
+    PrecoService precoService;
 
 
     public Item_pedidoDTO create(Item_pedidoDTO item_pedidoDTO){
@@ -35,17 +37,28 @@ public class Item_pedidoService {
             }
         }
         if(item_pedidoDTO.getItem_pedido_key()!=null){
-            item_pedido.setItem_pedido_key(new Item_pedido_key());
+
             if(item_pedidoDTO.getItem_pedido_key().getPedido()!=null){
+
                 if(this.pedidoRepository.existsById(item_pedidoDTO.getItem_pedido_key().getPedido().getId())){
                     item_pedido.getItem_pedido_key().setPedido(this.pedidoRepository.getById(item_pedidoDTO.getItem_pedido_key().getPedido().getId()));
                 }
+                if(item_pedidoDTO.getItem_pedido_key().getPedido().getFinalizado()!=null){
+                    if(item_pedidoDTO.getItem_pedido_key().getPedido().getFinalizado()){
+                        return null;
+                    }
+
+                }
             }
-            if(item_pedidoDTO.getItem_pedido_key().getItem()!=null){
-                item_pedido.getItem_pedido_key().setId_item(item_pedidoDTO.getItem_pedido_key().getItem());
-            }
+
         }
-        if(this.consultaEstoque(item_pedido.getProduto().getId_produto(), item_pedido.getQuantidade_produto())){
+        if(this.consultaEstoque(item_pedidoDTO.getProduto().getId_produto(), item_pedidoDTO.getQuantidade_produto())&&!item_pedidoRepository.existsById(item_pedido.getItem_pedido_key())){
+            //a ideia aqui é setar o valor do Total e SubTotal no pedido;
+
+            Preco_VendaDTO pv = this.precoService.findLastPriceById_produto(item_pedido.getProduto().getId_produto());
+            item_pedido.getItem_pedido_key().getPedido().setTotal(item_pedido.getItem_pedido_key().getPedido().getTotal()+(pv.getValor_preco()*item_pedido.getQuantidade_produto()));
+            item_pedido.getItem_pedido_key().getPedido().setSubtotal(item_pedido.getItem_pedido_key().getPedido().getSubtotal()+(pv.getValor_preco()*item_pedido.getQuantidade_produto()));
+            item_pedido.getItem_pedido_key().setPedido(this.pedidoRepository.save(item_pedido.getItem_pedido_key().getPedido()));
             return this.businessToDto(this.item_pedidoRepository.save(item_pedido));
         }else{
             return null;
@@ -53,7 +66,9 @@ public class Item_pedidoService {
 
     }
     private Boolean consultaEstoque(Long id_produto, Integer quantidade){
-        Integer qtdEmEstoque=this.estoqueService.getById(id_produto).getQuantidade();
+
+        EstoqueDTO estoque = estoqueService.getById(id_produto);
+        Integer qtdEmEstoque = estoque.getQuantidade();
         Boolean b = qtdEmEstoque>=quantidade;
         if(b){
             EstoqueDTO estoqueDTO=new EstoqueDTO();
@@ -63,7 +78,7 @@ public class Item_pedidoService {
         }
         return b;
     }
-//    public Item_pedidoDTO update(Item_pedidoDTO item_pedidoDTO, Item_pedido_keyDTO item_pedido_keyDTO){
+    //    public Item_pedidoDTO update(Item_pedidoDTO item_pedidoDTO, Item_pedido_keyDTO item_pedido_keyDTO){
 //        Item_pedido item_pedido = this.dtoToBusiness(item_pedidoDTO);
 //        item_pedido.getItem_pedido_key().setId_item(item_pedido_keyDTO.getItem());
 //        if(item_pedido_keyDTO.getPedido()!=null){
@@ -145,7 +160,7 @@ public class Item_pedidoService {
             dto.setEan(bussines.getProduto().getEan());
             dto.setDestaque(bussines.getProduto().getDestaque());
             dto.setDataDeCriacao(bussines.getProduto().getDataDeCriacao());
-
+            dto.setFoto(bussines.getProduto().getFoto());
             if (bussines.getProduto().getFamilia() != null){
                 FamiliaDTO familiaDTO = new FamiliaDTO();
                 familiaDTO.setId_familia(bussines.getProduto().getFamilia().getId_familia());
@@ -224,10 +239,10 @@ public class Item_pedidoService {
                     formaPagamento.setParcelamento(bussines.getItem_pedido_key().getPedido().getParcelamento().getParcelamento());
                     dto.setPagamento(formaPagamento);
                 }
-                if(bussines.getItem_pedido_key().getPedido().getStatusPedido()!= null) {
+                if(bussines.getItem_pedido_key().getPedido().getStatusEntrega()!= null) {
                     StatusPedidoDTO statusPedido = new StatusPedidoDTO();
-                    statusPedido.setId_status_pedido(bussines.getItem_pedido_key().getPedido().getStatusPedido().getId_status_pedido());
-                    statusPedido.setEstado_pedido(bussines.getItem_pedido_key().getPedido().getStatusPedido().getEstado_pedido());
+                    statusPedido.setId_status_pedido(bussines.getItem_pedido_key().getPedido().getStatusEntrega().getId_status_pedido());
+                    statusPedido.setEstado_pedido(bussines.getItem_pedido_key().getPedido().getStatusEntrega().getEstado_pedido());
                     dto.setStatus(statusPedido);
                 }
                 pedidoDTO.getItem_pedido_key().setPedido(dto);
@@ -332,7 +347,7 @@ public class Item_pedidoService {
                     }else{
                         m.setEstado_pedido(dto.getItem_pedido_key().getPedido().getStatus().getEstado_pedido());
                     }
-                    pedidobus.setStatusPedido(m);
+                    pedidobus.setStatusEntrega(m);
                 }
                 bus.getItem_pedido_key().setPedido(pedidobus);
             }
@@ -348,7 +363,7 @@ public class Item_pedidoService {
             business.setEan(dto.getProduto().getEan());
             business.setDestaque(dto.getProduto().getDestaque());
             business.setDataDeCriacao(dto.getProduto().getDataDeCriacao());
-
+            business.setFoto(dto.getProduto().getFoto());
             if (dto.getProduto().getFamilia() != null){
                 Familia f = new Familia();
                 if (dto.getProduto().getFamilia().getId_familia() != null){

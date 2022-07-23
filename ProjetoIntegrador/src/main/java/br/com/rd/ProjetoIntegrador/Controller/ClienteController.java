@@ -3,11 +3,14 @@ package br.com.rd.ProjetoIntegrador.Controller;
 import br.com.rd.ProjetoIntegrador.model.dto.ClienteDTO;
 
 import br.com.rd.ProjetoIntegrador.service.ClienteService;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import com.auth0.jwt.JWT;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/cadastro-cliente")
@@ -27,6 +30,11 @@ public class ClienteController {
         clienteService.excluirCliente(id_Cliente);
     }
 
+    @GetMapping("/getByEmail/{email}")
+    public ClienteDTO getByEmail(@PathVariable ("email") String email){
+        return  clienteService.getByEmail(email);
+    }
+
     @GetMapping
     public List<ClienteDTO> findAllCliente(){
         return clienteService.findAllCliente();
@@ -40,6 +48,9 @@ public class ClienteController {
     public ClienteDTO atualizarClientePorId (@RequestBody ClienteDTO clienteDTO, @PathVariable ("id_Cliente") Long id_Cliente){
         return  clienteService.atualizarClientePorId(clienteDTO, id_Cliente);
     }
-
+    @GetMapping("/senha/{email}")
+    public void recuperarSenha(@PathVariable("email") String email){
+        clienteService.recuperarSenha(email);
+    }
 
 }

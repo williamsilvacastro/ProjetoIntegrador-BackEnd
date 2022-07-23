@@ -1,6 +1,7 @@
 package br.com.rd.ProjetoIntegrador.Controller;
 
 import antlr.collections.impl.LList;
+import br.com.rd.ProjetoIntegrador.model.dto.Card.CardProdutoDTO;
 import br.com.rd.ProjetoIntegrador.model.dto.PratoDTO;
 import br.com.rd.ProjetoIntegrador.model.dto.ProdutoDTO;
 import br.com.rd.ProjetoIntegrador.service.ProdutoService;
@@ -32,6 +33,8 @@ public class ProdutoController {
         return  produtoService.searchByProdutoId(id);
     }
 
+
+
     @GetMapping("/por-marca/{id}")
     public List<ProdutoDTO> findByMarca(@PathVariable ("id") Long id){
         return produtoService.listaProdutoMarca(id);
@@ -50,10 +53,7 @@ public class ProdutoController {
         return produtoService.listaProdutoPrato(id);
     }
 
-    @GetMapping("/{id_cat}/{id_marc}/{id_fam}/{id_prato}")
-    public List<ProdutoDTO> findBuscaAvan(@PathVariable ("id_cat")Long id_cat, @PathVariable ("id_marc")Long id_marc, @PathVariable ("id_fam")Long id_fam, @PathVariable ("id_prato")Long id_prato){
-        return this.produtoService.buscaAvan(id_cat, id_marc, id_fam, id_prato);
-    }
+
 
 
     @GetMapping("/buscar/{busca}")
