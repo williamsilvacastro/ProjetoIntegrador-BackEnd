@@ -11,23 +11,23 @@ import java.util.List;
 
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Long>, ProdutoRepositoryCustom {
-    @Query(value = " SELECT * FROM PRODUTO P WHERE p.ID_MARCA =? ", nativeQuery = true)
+    @Query(value = " SELECT * FROM produto p WHERE p.ID_MARCA =? ", nativeQuery = true)
     List<Produto> findByMarca(Long id);
 
 
-    @Query(value = " SELECT * FROM PRODUTO P WHERE p.ID_CATEGORIA =? ", nativeQuery = true)
+    @Query(value = " SELECT * FROM produto p WHERE p.ID_CATEGORIA =? ", nativeQuery = true)
     List<Produto> findByCategoria(Long id);
 
-    @Query(value = " SELECT * FROM PRODUTO P WHERE p.ID_FAMILIA =? ", nativeQuery = true)
+    @Query(value = " SELECT * FROM produto p WHERE p.ID_FAMILIA =? ", nativeQuery = true)
     List<Produto> findByFamilia(Long id);
 
-    @Query(value = " SELECT * FROM PRODUTO P WHERE p.ID_PRATO =? ", nativeQuery = true)
+    @Query(value = " SELECT * FROM produto p WHERE p.ID_PRATO =? ", nativeQuery = true)
     List<Produto> findByPrato(Long id);
 
-    @Query(value = " SELECT * FROM PRODUTO P WHERE p.NOME_PRODUTO LIKE %:busca% ", nativeQuery = true)
+    @Query(value = " SELECT * FROM produto p WHERE p.NOME_PRODUTO LIKE %:busca% ", nativeQuery = true)
     List<Produto> pesquisarProdutos(@Param("busca") String busca);
 
-    @Query(value = "SELECT * FROM PRODUTO P ORDER BY P.data_de_criacao asc LIMIT 5", nativeQuery = true)
+    @Query(value = "SELECT * FROM produto p ORDER BY p.data_de_criacao asc LIMIT 5", nativeQuery = true)
     List<Produto> buscaNovidades();
 
     @Query(value = "select * from produto p where p.destaque = true limit 10", nativeQuery = true)
