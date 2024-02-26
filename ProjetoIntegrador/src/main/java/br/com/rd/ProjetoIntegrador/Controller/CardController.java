@@ -18,12 +18,9 @@ public class CardController {
     public CardProdutoDTO findCardProdutoById_produto(@PathVariable("id") Long id){
         return this.produtoService.findCardProdutoById_produto(id);
     }
-    @GetMapping("/multi")
-    public List<CardProdutoDTO> findCardsProfutoById_produto(@RequestBody List<Long> list){
-        return this.produtoService.findCardsProfutoById_produto(list);
-    }
+
     @PostMapping("/multi")
-    public List<CardProdutoDTO> pfindCardsProfutoById_produto(@RequestBody List<Long> list){
+    public List<CardProdutoDTO> findCardsProfutoById_produto(@RequestBody List<Long> list){
         return this.produtoService.findCardsProfutoById_produto(list);
     }
     @GetMapping("/{id_cat}/{id_marc}/{id_fam}/{id_prato}")
