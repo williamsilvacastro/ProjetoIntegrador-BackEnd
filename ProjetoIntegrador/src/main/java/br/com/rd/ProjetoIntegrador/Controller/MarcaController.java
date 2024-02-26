@@ -21,7 +21,7 @@ public class MarcaController {
         return marcaService.listaDTO();
 
     }
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public MarcaDTO getById(@PathVariable("id")Long id){
         return marcaService.buscarPorId(id);
     }

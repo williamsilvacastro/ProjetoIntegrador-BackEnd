@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -37,15 +38,24 @@ public class JWTConfiguracao extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(clienteService).passwordEncoder(passwordEncoder);
     }
 
+
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        // Ignora o filtro de recursos para os padrões de URL especificados
+        web.ignoring().antMatchers("/resources/**", "/swagger-ui/**", "/v2/api-docs", "/webjars/**", "/swagger-resources/**");
+    }
+
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.DELETE, "/clienteEndereco/DeleteEndereco/{id_cliente}/{id_endereco}","/clienteCartao/delete/{id1}/{id2}").permitAll()
                 .antMatchers(HttpMethod.POST, "/login", "/cadastroCliente/salvar", "/Card/multi", "/clienteCartao/create", "/Pedido/gerarNf"
                         ,"/formulariocontato", "/clienteEndereco/create").permitAll()
-                .antMatchers(HttpMethod.GET, "/home/categorias", "/home/destaques", "/home/novidades", "/clienteCartao/cliente/{id}"
+                .antMatchers(HttpMethod.GET, "/swagger-ui/", "/v2/api-docs", "/home/categorias", "/home/destaques", "/home/novidades", "/clienteCartao/cliente/{id}"
                         ,"/produtos", "/produtos/{id}","/Estoque/{id}", "/cadastro-cliente/senha/{email}", "/parcelas", "/cadastro-cliente/getByEmail/{email}",
                         "/produtos/por-categoria/{id}", "/produtos/por-marca/{id}", "/produtos/por-familia/{id}", "/Pedido/{id}", "/clienteEndereco/cliente/{id}"
                         , "/produtos/por-prato/{id}", "/Marca", "/Marca/{id}", "/Card/Marca/{id}", "/Card/{id_cat}/{id_marc}/{id_fam}/{id_prato}"

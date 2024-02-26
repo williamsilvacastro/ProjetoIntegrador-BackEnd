@@ -30,7 +30,7 @@ public class EnderecoController {
     public EnderecoDTO update(@PathVariable("id") Long id, @RequestBody EnderecoDTO dto){
         return this.enderecoService.updateById(id, dto);
     }
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Long id){
         this.enderecoService.deleteById(id);
     }

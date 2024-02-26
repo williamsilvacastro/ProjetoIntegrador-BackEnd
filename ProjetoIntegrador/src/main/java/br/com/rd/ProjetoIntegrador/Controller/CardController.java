@@ -14,7 +14,7 @@ public class CardController {
     ProdutoService produtoService;
 
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public CardProdutoDTO findCardProdutoById_produto(@PathVariable("id") Long id){
         return this.produtoService.findCardProdutoById_produto(id);
     }

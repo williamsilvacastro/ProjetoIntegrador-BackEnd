@@ -27,7 +27,7 @@ public class PedidoController {
         return this.pedidoService.findById(id);
     }
 
-    @GetMapping("cliente/{id}")
+    @GetMapping("/cliente/{id}")
     public List<PedidoDTO> findByIdCliente(@PathVariable("id")Long id){
         return this.pedidoService.findByIdcliente(id);
     }
